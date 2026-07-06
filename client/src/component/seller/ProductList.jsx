@@ -4,25 +4,25 @@ import { useAppContext } from '../../context/AppContext';
 import toast from 'react-hot-toast';
 const ProductList = () => {
 
-   const {products , currency , fetchProduct,axios} = useAppContext()
+    const { products, currency, fetchProduct, axios } = useAppContext()
     // console.log("products is -- " ,products);
-   
-   const toggleStock = async (id,inStock)=>{
-    try {
-        console.log('inStock: ' ,inStock);
-        const {data} = await axios.post('/api/product/stock',{id,inStock})
-        console.log("data is ",data);
-        if(data.success){
-             toast.success(data.message);
-             fetchProduct();
-        }else{
-              toast.error(data.message);
+
+    const toggleStock = async (id, inStock) => {
+        try {
+
+            const { data } = await axios.post('/api/product/stock', { id, inStock })
+
+            if (data.success) {
+                toast.success(data.message);
+                fetchProduct();
+            } else {
+                toast.error(data.message);
+            }
+        } catch (error) {
+            console.log("error is - ", error)
+            toast.error(error.message);
         }
-    } catch (error) {
-        console.log("error is - ",error)
-          toast.error(error.message);
     }
-   }
     return (
         <div className="no-scrollbar  h-[95vh] overflow-y-scroll flex-1 flex flex-col justify-between">
             <div className="w-full md:p-10 p-4">
@@ -52,7 +52,7 @@ const ProductList = () => {
                                         <label className="relative inline-flex items-center cursor-pointer text-gray-900 gap-3">
                                             <input onChange={(e) =>
                                                 toggleStock(product._id, e.target.checked)
-                                            } checked={product.inStock} type="checkbox" className="sr-only peer"  />
+                                            } checked={product.inStock} type="checkbox" className="sr-only peer" />
                                             <div className="w-12 h-7 bg-slate-300 rounded-full peer peer-checked:bg-blue-600 transition-colors duration-200"></div>
                                             <span className="dot absolute left-1 top-1 w-5 h-5 bg-white rounded-full transition-transform duration-200 ease-in-out peer-checked:translate-x-5"></span>
                                         </label>

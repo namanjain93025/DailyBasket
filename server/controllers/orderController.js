@@ -1,5 +1,5 @@
 import Order from "../models/order.js";
-import {Product} from "../models/product.js";
+import { Product } from "../models/product.js";
 import stripe from 'stripe'
 import { configDotenv } from "dotenv";
 import Razorpay from "razorpay";
@@ -7,74 +7,74 @@ import crypto from 'crypto';
 import User from "../models/user.js";
 //place order COD : /api/order/cod
 
-export const placeOrderCOD = async(req , res)=>{
+export const placeOrderCOD = async (req, res) => {
     try {
-        const {userId,items,address} = req.body;
-        if(!address || items.length === 0){
-            return res.json({success :false,message :'Invalid data'})
+        const { userId, items, address } = req.body;
+        if (!address || items.length === 0) {
+            return res.json({ success: false, message: 'Invalid data' })
         }
         //calculate amount using items
-        let amount  = await items.reduce(async(acc,item)=>{
-            const product  = await Product.findById(item.product);
-            return (await acc) + product.offerPrice*item.quantity ;
-        },0)
+        let amount = await items.reduce(async (acc, item) => {
+            const product = await Product.findById(item.product);
+            return (await acc) + product.offerPrice * item.quantity;
+        }, 0)
 
         // Add Tax Charge (2%)
-        amount +=Math.floor(amount*0.02);
+        amount += Math.floor(amount * 0.02);
 
         await Order.create({
             userId,
             items,
             amount,
             address,
-            paymentType:'COD',
+            paymentType: 'COD',
         });
-        return res.json({success:true , message : 'order placed successfully '})
+        return res.json({ success: true, message: 'order placed successfully ' })
     } catch (error) {
         return res.json({
-            success : false,
-            message : error.message,
+            success: false,
+            message: error.message,
         })
     }
 }
 //Get Order by User ID : /api/order/user
 
-export const getUserOrders = async (req,res)=>{
- try {
-    const {userId} = req;
-    const orders = await Order.find({
-        userId ,
-        $or :[{paymentType : 'COD'},{isPaid : true}]
-    }).populate('items.product address').sort({createdAt : -1});
+export const getUserOrders = async (req, res) => {
+    try {
+        const { userId } = req;
+        const orders = await Order.find({
+            userId,
+            $or: [{ paymentType: 'COD' }, { isPaid: true }]
+        }).populate('items.product address').sort({ createdAt: -1 });
 
-    return res.json({
-        success: true,
-        orders,
-    })
+        return res.json({
+            success: true,
+            orders,
+        })
 
- } catch (error) {
- return  res.json({success : false ,message : error.message});
- }
+    } catch (error) {
+        return res.json({ success: false, message: error.message });
+    }
 }
 
 //Get All Order : /api/order
 
-export const getAllOrders = async (req,res)=>{
- try {
-  
-    const orders = await Order.find({
-        $or :[{paymentType : 'COD'},{isPaid : true}]
-    }).populate('items.product address').sort({createdAt : -1});
+export const getAllOrders = async (req, res) => {
+    try {
 
-      return res.json({
-        success: true,
-        orders,
-    })
+        const orders = await Order.find({
+            $or: [{ paymentType: 'COD' }, { isPaid: true }]
+        }).populate('items.product address').sort({ createdAt: -1 });
+
+        return res.json({
+            success: true,
+            orders,
+        })
 
 
- } catch (error) {
-   return res.json({success : false ,message : error.message});
- }
+    } catch (error) {
+        return res.json({ success: false, message: error.message });
+    }
 }
 
 
@@ -163,7 +163,7 @@ export const placeOrderStripe = async (req, res) => {
 export const placeOrderRazorpay = async (req, res) => {
     try {
         const { userId, items, address } = req.body;
-         console.log(userId ,"  " ,items ,"  ",address);
+        console.log(userId, "  ", items, "  ", address);
         if (!address || items.length === 0) {
             return res.json({
                 success: false,
@@ -237,9 +237,9 @@ export const placeOrderRazorpay = async (req, res) => {
     }
 };
 
-export const verifyRazorpay = async(req,res)=>{
+export const verifyRazorpay = async (req, res) => {
     try {
-          const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+        const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
 
         const body = razorpay_order_id + "|" + razorpay_payment_id;
 
@@ -248,22 +248,22 @@ export const verifyRazorpay = async(req,res)=>{
             .update(body)
             .digest("hex");
 
-         const isValid = expectedSignature === razorpay_signature;
-         
-          if (!isValid) {
+        const isValid = expectedSignature === razorpay_signature;
+
+        if (!isValid) {
             await Order.findOneAndUpdate(
                 { razorpayOrderId: razorpay_order_id },
                 { isPaid: false }
             );
-             return res.json({ success: false, message: "Invalid signature" });
+            return res.json({ success: false, message: "Invalid signature" });
         }
-         const order = await Order.findOneAndUpdate(
+        const order = await Order.findOneAndUpdate(
             { razorpayOrderId: razorpay_order_id },
             {
                 isPaid: true,
                 razorpayPaymentId: razorpay_payment_id,
             },
-             { returnDocument: "after" }
+            { returnDocument: "after" }
         );
 
         if (!order) {
@@ -302,9 +302,9 @@ export const razorpayWebhook = async (req, res) => {
             await Order.findOneAndUpdate(
                 { razorpayOrderId: paymentEntity.order_id },
                 { isPaid: true, razorpayPaymentId: paymentEntity.id }
-             
+
             );
-            await User.findByIdAndUpdate(Order.userId,{ cartItems: {} })
+            await User.findByIdAndUpdate(Order.userId, { cartItems: {} })
         } else if (event === "payment.failed") {
             await Order.findOneAndUpdate(
                 { razorpayOrderId: paymentEntity.order_id },

@@ -1,8 +1,8 @@
 import React from 'react'
 
 const NewsLetter = () => {
-  
-    
+
+
     return (
         <div className=" mt-24 pb-14 flex flex-col items-center justify-center text-center space-y-2">
             <h1 className="md:text-4xl text-2xl font-semibold">Never Miss a Deal!</h1>

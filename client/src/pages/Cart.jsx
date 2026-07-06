@@ -4,91 +4,91 @@ import { assets, dummyAddress } from "../assets/assets";
 import toast from "react-hot-toast";
 import { data } from "react-router-dom";
 const Cart = () => {
-    const {products ,navigate ,currency,cartItem,removeFromCart,getTotalCount,
-        updateCartItem,getTotalAmount ,axios ,user ,setCartItems} =useAppContext();
-    
-    const [cartArray ,setCartArray] = useState([]);
-    const [address ,setAddress] = useState([]);
-    const [showAddress,setShowAddress]=useState(false);
-    const [selectedAddress,setSelectedAddress]=useState(null);
-    const [paymentOption,setPaymentOption]=useState('COD');
+    const { products, navigate, currency, cartItem, removeFromCart, getTotalCount,
+        updateCartItem, getTotalAmount, axios, user, setCartItems } = useAppContext();
 
-    const getCart = ()=>{
-        let tempArray =[]
-        for(const key in cartItem){
-            const product  = products.find((item)=>item._id===key)
-            if(!product) continue;
-            const productCopy = {...product, quantity: cartItem[key]}
+    const [cartArray, setCartArray] = useState([]);
+    const [address, setAddress] = useState([]);
+    const [showAddress, setShowAddress] = useState(false);
+    const [selectedAddress, setSelectedAddress] = useState(null);
+    const [paymentOption, setPaymentOption] = useState('COD');
+
+    const getCart = () => {
+        let tempArray = []
+        for (const key in cartItem) {
+            const product = products.find((item) => item._id === key)
+            if (!product) continue;
+            const productCopy = { ...product, quantity: cartItem[key] }
             tempArray.push(productCopy);
         }
-       setCartArray(tempArray);
+        setCartArray(tempArray);
     }
 
-    const getAddress = async()=>{
+    const getAddress = async () => {
         try {
-           
-          const {data} =  await axios.get('/api/address/get')
-          if(data.success){
-             setAddress(data.addresses)
-             if(data.addresses.length>0){
-                setSelectedAddress(data.addresses[0]);
-             }
-          }else{
-            toast.error(data.message)
-          }
+
+            const { data } = await axios.get('/api/address/get')
+            if (data.success) {
+                setAddress(data.addresses)
+                if (data.addresses.length > 0) {
+                    setSelectedAddress(data.addresses[0]);
+                }
+            } else {
+                toast.error(data.message)
+            }
         } catch (error) {
             toast.error(error.message);
         }
     }
 
-    useEffect(()=>{
-        if(products.length >0 && cartItem){
+    useEffect(() => {
+        if (products.length > 0 && cartItem) {
             getCart();
         }
-    },[products,cartItem])
-    
-    useEffect(()=>{
-        
-       if(user) {getAddress()}
-        },[user])
+    }, [products, cartItem])
 
-    const placeOrder = async()=>{
+    useEffect(() => {
+
+        if (user) { getAddress() }
+    }, [user])
+
+    const placeOrder = async () => {
         try {
-            if(!selectedAddress){
-               toast.error('Select Address')
-                return 
+            if (!selectedAddress) {
+                toast.error('Select Address')
+                return
             }
             //place order with COD
-            if(paymentOption==='COD'){
-                const {data} = await axios.post('/api/order/cod',{
-                    userId : user._id,
-                    items : cartArray.map(item=>({product : item._id , quantity : item.quantity})),
-                    address : selectedAddress._id,
-                }) 
+            if (paymentOption === 'COD') {
+                const { data } = await axios.post('/api/order/cod', {
+                    userId: user._id,
+                    items: cartArray.map(item => ({ product: item._id, quantity: item.quantity })),
+                    address: selectedAddress._id,
+                })
 
-                if(data.success){
+                if (data.success) {
 
-                toast.success(data.message)
-                setCartItems({});
-                navigate('/my-orders')
+                    toast.success(data.message)
+                    setCartItems({});
+                    navigate('/my-orders')
 
-                }else{
-                 toast.error(data.message)
+                } else {
+                    toast.error(data.message)
                 }
-            }else{
+            } else {
                 //place order with stripe
-                      const {data} = await axios.post('/api/order/stripe',{
-                    userId : user._id,
-                    items : cartArray.map(item=>({product : item._id , quantity : item.quantity})),
-                    address : selectedAddress._id,
-                }) 
+                const { data } = await axios.post('/api/order/stripe', {
+                    userId: user._id,
+                    items: cartArray.map(item => ({ product: item._id, quantity: item.quantity })),
+                    address: selectedAddress._id,
+                })
 
-                if(!data.success){
-                   return  toast.error(data.message)
+                if (!data.success) {
+                    return toast.error(data.message)
 
                 }
                 const { razorpayOrder, orderId } = data;
-                  const options = {
+                const options = {
                     key: import.meta.env.VITE_RAZORPAY_KEY_ID, // public key only
                     amount: razorpayOrder.amount,
                     currency: razorpayOrder.currency,
@@ -96,15 +96,15 @@ const Cart = () => {
                     description: "Order Payment",
                     order_id: razorpayOrder.id,
                     handler: async function (response) {
-                       
+
                         const verifyRes = await axios.post("/api/order/verify-razorpay", response);
-                        
+
                         if (verifyRes.data.success) {
-                                                
+
                             toast.success("Payment successful!");
-                             setCartItems({});
-                             navigate("/my-orders");
-                            
+                            setCartItems({});
+                            navigate("/my-orders");
+
                         } else {
                             toast.error("Payment verification failed");
                         }
@@ -120,16 +120,16 @@ const Cart = () => {
                     toast.error("Payment failed: " + response.error.description);
                 });
                 rzp.open();
-                
+
             }
 
-            
+
         } catch (error) {
             toast.error(error.message)
         }
     }
 
-    return (products.length > 0 && cartItem )?(
+    return (products.length > 0 && cartItem) ? (
         <div className="flex flex-col md:flex-row py-16 max-w-6xl w-full px-6 mx-auto">
             <div className='flex-1 max-w-4xl'>
                 <h1 className="text-3xl font-medium mb-6">
@@ -145,7 +145,7 @@ const Cart = () => {
                 {cartArray.map((product, index) => (
                     <div key={index} className="grid grid-cols-[2fr_1fr_1fr] text-gray-500 items-center text-sm md:text-base font-medium pt-3">
                         <div className="flex items-center md:gap-6 gap-3">
-                            <div onClick={()=>(navigate(`/product/${product.category}/${product._id}`))} className="cursor-pointer w-24 h-24 flex items-center justify-center border border-gray-300 rounded overflow-hidden">
+                            <div onClick={() => (navigate(`/product/${product.category}/${product._id}`))} className="cursor-pointer w-24 h-24 flex items-center justify-center border border-gray-300 rounded overflow-hidden">
                                 <img className="max-w-full h-full object-cover" src={product.image[0]} alt={product.name} />
                             </div>
                             <div>
@@ -154,8 +154,8 @@ const Cart = () => {
                                     <p>Weight: <span>{product.weight || "N/A"}</span></p>
                                     <div className='flex items-center'>
                                         <p>Qty:</p>
-                                        <select onChange={e => updateCartItem(product._id,Number(e.target.value))} defaultValue={cartItem[product._id]} className='outline-none'>
-                                            {Array(cartItem[product._id] >9 ? cartItem[product._id] : 9).fill('').map((_, index) => (
+                                        <select onChange={e => updateCartItem(product._id, Number(e.target.value))} defaultValue={cartItem[product._id]} className='outline-none'>
+                                            {Array(cartItem[product._id] > 9 ? cartItem[product._id] : 9).fill('').map((_, index) => (
                                                 <option key={index} value={index + 1}>{index + 1}</option>
                                             ))}
                                         </select>
@@ -164,13 +164,13 @@ const Cart = () => {
                             </div>
                         </div>
                         <p className="text-center">{currency}{product.offerPrice * product.quantity}</p>
-                        <button onClick= {()=>{removeFromCart(product._id)}} className="cursor-pointer mx-auto">
-                            <img src={assets.remove_icon} alt="" className="inline-block w-6 h-6"/>
+                        <button onClick={() => { removeFromCart(product._id) }} className="cursor-pointer mx-auto">
+                            <img src={assets.remove_icon} alt="" className="inline-block w-6 h-6" />
                         </button>
                     </div>)
                 )}
 
-                <button onClick={()=>(navigate('/product'))} className="group cursor-pointer flex items-center mt-8 gap-2 text--500 font-medium">
+                <button onClick={() => (navigate('/product'))} className="group cursor-pointer flex items-center mt-8 gap-2 text--500 font-medium">
                     <img className="group-hover:translate-1 transition" src={assets.arrow_right_icon_colored} alt="" />
                     Continue Shopping
                 </button>
@@ -184,19 +184,19 @@ const Cart = () => {
                 <div className="mb-6">
                     <p className="text-sm font-medium uppercase">Delivery Address</p>
                     <div className="relative flex justify-between items-start mt-2">
-                        <p className="text-gray-500">{selectedAddress ?(`${selectedAddress.street} , ${selectedAddress.city} ,${selectedAddress.country} `):("No address found")}</p>
+                        <p className="text-gray-500">{selectedAddress ? (`${selectedAddress.street} , ${selectedAddress.city} ,${selectedAddress.country} `) : ("No address found")}</p>
                         <button onClick={() => setShowAddress(!showAddress)} className="text-primary hover:underline cursor-pointer">
                             Change
                         </button>
                         {showAddress && (
                             <div className="absolute top-12 py-1 bg-white border border-gray-300 text-sm w-full">
-                                {address.map((address,index)=>(
+                                {address.map((address, index) => (
                                     <p onClick={() => setShowAddress(false)} className="text-gray-500 p-2 hover:bg-gray-100">
                                         {`${address.street} , ${address.city} ,${address.country} `}
                                     </p>))}
-                                   <p onClick={() => navigate('/add-address')} className="text-500 text-center cursor-pointer p-2 hover:bg--500/10">
+                                <p onClick={() => navigate('/add-address')} className="text-500 text-center cursor-pointer p-2 hover:bg--500/10">
                                     Add address
-                                   </p>
+                                </p>
                             </div>
                         )
                         }
@@ -204,7 +204,7 @@ const Cart = () => {
 
                     <p className="text-sm font-medium uppercase mt-6">Payment Method</p>
 
-                    <select onChange={(e)=>(setPaymentOption(e.target.value))} className="w-full border border-gray-300 bg-white px-3 py-2 mt-2 outline-none">
+                    <select onChange={(e) => (setPaymentOption(e.target.value))} className="w-full border border-gray-300 bg-white px-3 py-2 mt-2 outline-none">
                         <option value="COD">Cash On Delivery</option>
                         <option value="Online">Online Payment</option>
                     </select>
@@ -220,15 +220,15 @@ const Cart = () => {
                         <span>Shipping Fee</span><span className="text-green-600">Free</span>
                     </p>
                     <p className="flex justify-between">
-                        <span>Tax (2%)</span><span>{currency}{getTotalAmount()*2/100}</span>
+                        <span>Tax (2%)</span><span>{currency}{getTotalAmount() * 2 / 100}</span>
                     </p>
                     <p className="flex justify-between text-lg font-medium mt-3">
-                        <span>Total Amount:</span><span>{getTotalAmount()+(getTotalAmount()*2/100)}</span>
+                        <span>Total Amount:</span><span>{getTotalAmount() + (getTotalAmount() * 2 / 100)}</span>
                     </p>
                 </div>
 
                 <button onClick={placeOrder} className="w-full py-3 mt-6 cursor-pointer bg-primary text-white font-medium hover:bg-primary-dull transition">
-                  {paymentOption=='COD' ? "Place Order" :"Proceed to Checkout"}
+                    {paymentOption == 'COD' ? "Place Order" : "Proceed to Checkout"}
                 </button>
             </div>
         </div>

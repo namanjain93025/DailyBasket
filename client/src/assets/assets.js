@@ -69,7 +69,13 @@ import vanilla_muffins_image from "./vanilla_muffins_image.png";
 import quinoa_image from "./quinoa_image.png";
 import brown_rice_image from "./brown_rice_image.png";
 import barley_image from "./barley_image.png";
-
+import dryFruits from './DryFruits.png'
+import HomeEssentials from './HomeEssentials.png'
+import ColdDrinks from './ColdDrinks.png'
+import Biscuits from './Biscuits.png'
+import SkinCare from './SkinCare.png'
+import Staples from './Staples.png'
+import DriedFruits from './DriedFruits.png'
 export const assets = {
   logo,
   search_icon,
@@ -102,19 +108,19 @@ export const assets = {
 
 export const categories = [
   {
-    text: "Organic veggies",
-    path: "Vegetables",
-    image: organic_vegitable_image,
+    text: "Dried Fruits",
+    path: "driedFruits",
+    image: DriedFruits,
     bgColor: "#FEF6DA",
   },
   {
-    text: "Fresh Fruits",
-    path: "Fruits",
-    image: fresh_fruits_image,
+    text: "Household Essentials",
+    path: "houseHoldEssentials",
+    image: HomeEssentials,
     bgColor: "#FEE0E0",
   },
   {
-    text: "Cold Drinks",
+    text: "Beverages",
     path: "Drinks",
     image: bottles_image,
     bgColor: "#F0F5DE",
@@ -126,21 +132,21 @@ export const categories = [
     bgColor: "#E1F5EC",
   },
   {
-    text: "Dairy Products",
-    path: "Dairy",
-    image: dairy_product_image,
+    text: "Staples",
+    path: "Staples",
+    image: Staples,
     bgColor: "#FEE6CD",
   },
   {
-    text: "Bakery & Breads",
+    text: "Bakery & Rusk",
     path: "Bakery",
     image: bakery_image,
     bgColor: "#E0F6FE",
   },
   {
-    text: "Grains & Cereals",
-    path: "Grains",
-    image: grain_image,
+    text: "Skin Care",
+    path: "skinCare",
+    image: SkinCare,
     bgColor: "#F1E3F9",
   },
 ];

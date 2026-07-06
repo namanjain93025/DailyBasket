@@ -1,6 +1,6 @@
 import dotenv, { configDotenv } from 'dotenv'
 
-const  instance = new Razorpay({
+const instance = new Razorpay({
   key_id: '<your_partner_key>',
   key_secret: '<your_partner_secret>',
   headers: {

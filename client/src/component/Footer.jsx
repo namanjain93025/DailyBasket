@@ -1,12 +1,12 @@
 import React from "react";
 import { assets, footerLinks } from "../assets/assets";
-const  Footer = () => {
-     
+const Footer = () => {
+
     return (
-        <div  className="bg-primary/10 mt-10 px-6 md:px-16 lg:px-24 xl:px-32">
+        <div className="bg-primary/10 mt-10 px-6 md:px-16 lg:px-24 xl:px-32">
             <div className="flex flex-col md:flex-row items-start justify-between gap-10 py-10 border-b border-gray-500/30 text-gray-500">
                 <div>
-                    <img className="w-34 md:w-32" src={assets.logo}alt="dummyLogoColored" />
+                    <img className="w-34 md:w-32" src={assets.logo} alt="dummyLogoColored" />
                     <p className="mt-6">From our shelves to your home — bringing fresh groceries, trusted products, and a smile with every purchase. We are proud to serve our community.
                     </p>
                     <p className="mt-6">Inspired by Aman Kirana Store </p>
@@ -33,4 +33,4 @@ const  Footer = () => {
         </div>
     );
 };
-export default Footer ;
+export default Footer;
