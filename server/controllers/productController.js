@@ -3,27 +3,72 @@ import { Product } from '../models/product.js';
 
 
 //Add Product : /api/product/add
+// export const addProduct = async (req, res) => {
+//     try {
+
+//         if (!req.body.productData || !req.files) {
+//             return res.json({
+//                 success: false,
+//                 message: 'Either File or Data is missing'
+//             })
+//         }
+
+//         let productData = JSON.parse(req.body.productData);
+
+
+//         const images = req.files
+
+//         let imagesUrl = await Promise.all(
+//             images.map(async (item) => {
+//                 let result = await await cloudinary.uploader.upload(item.path, { resource_type: "auto", folder: "E-COM" })
+//                 return result.secure_url;
+//             })
+//         )
+
+//         await Product.create({ ...productData, image: imagesUrl });
+//         res.json({ success: true, message: 'Product Added' });
+
+//     } catch (error) {
+//         console.log(error);
+//         res.json({ success: false, message: error.message });
+//     }
+// }
+
+
+
+// helper to upload a buffer via stream
+const uploadFromBuffer = (buffer) => {
+    return new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+            { resource_type: "auto", folder: "E-COM" },
+            (error, result) => {
+                if (error) reject(error);
+                else resolve(result);
+            }
+        );
+        stream.end(buffer);
+    });
+};
+
 export const addProduct = async (req, res) => {
     try {
-
         if (!req.body.productData || !req.files) {
             return res.json({
                 success: false,
                 message: 'Either File or Data is missing'
-            })
+            });
         }
 
         let productData = JSON.parse(req.body.productData);
 
-
-        const images = req.files
+        const images = req.files;
 
         let imagesUrl = await Promise.all(
             images.map(async (item) => {
-                let result = await await cloudinary.uploader.upload(item.path, { resource_type: "auto", folder: "E-COM" })
+                const result = await uploadFromBuffer(item.buffer);
                 return result.secure_url;
             })
-        )
+        );
 
         await Product.create({ ...productData, image: imagesUrl });
         res.json({ success: true, message: 'Product Added' });
@@ -32,7 +77,7 @@ export const addProduct = async (req, res) => {
         console.log(error);
         res.json({ success: false, message: error.message });
     }
-}
+};
 
 //Get Produvt : /api/product/list
 
