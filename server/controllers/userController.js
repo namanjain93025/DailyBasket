@@ -1,0 +1,137 @@
+import User from "../models/user.js";
+import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
+import { configDotenv } from "dotenv";
+
+
+// register user
+
+
+export const register = async(req ,res)=>{
+  try {
+    const {name ,email,password} =  req.body;
+    if(!name ||!email || !password){
+        return res.json({
+            success : false,
+            message : 'missing details',
+        })
+    }
+    const existingUser = await User.findOne({email});
+    if(existingUser){
+        return res.json({
+            success : false,
+            message : 'user already exist',
+        })
+    }
+    const hashedPassword = await bcrypt.hash(password,10);
+    const user = await User.create({
+        name,email,password: hashedPassword
+        })
+
+    const token = jwt.sign({id:user._id},process.env.JWT_SECRET,{expiresIn :'7d'});
+    
+    return res.cookie('token',token,{
+        httpOnly : true,//prevents js to access cookie
+        secure : process.env.NODE_ENV==='production',//use secure cookie in production
+        sameSite : process.env.NODE_ENV==='production'?'none' : 'strict',//csrf protection
+        maxAge : 7*24*60*60*1000 // cookie exp time
+
+    }).json({
+        success:true,
+        user :{email : user.email,name: user.name  }
+    })
+
+  } catch (error) {
+    return res.json({
+        success : false,
+        message : error.message,
+    })
+  }
+}
+
+//login user 
+export const login = async(req ,res)=>{
+    try {
+        //step-1 fetch the data 
+        const { email ,password} = req.body;
+        //step-2 validate 
+        if(!email || !password){
+            return res.json({
+                success : false,
+                message : 'All fields are required'
+            })
+        }
+        //step-3 does mail exist 
+        const user = await User.findOne({email})
+        //step-4 chechk the pass ans send token
+        if(!user){
+            return res.json({
+                success : false,
+                message : 'User not found',
+            })
+        }
+        const isMatch  = await bcrypt.compare(password,user.password);
+        if(!isMatch){
+            return res.json({
+                success : false,
+                message : "Invalid credentials",
+            })
+        }
+
+        const token = jwt.sign({id: user._id},process.env.JWT_SECRET,{expiresIn : '7d'});
+
+         return res.cookie('token',token,{
+        httpOnly : true,//prevents js to access cookie
+        secure : process.env.NODE_ENV==='production',//use secure cookie in production
+        sameSite : process.env.NODE_ENV==='production'?'none' : 'strict',//csrf protection
+        maxAge : 7*24*60*60*1000 // cookie exp time
+
+    }).json({
+        success:true,
+        message :"login sucessfully",
+        user :{email : user.email,name: user.name  }
+    })
+
+
+    } catch (error) {
+        return res.json({
+        success : false,
+        message : error.message,
+    })
+    }
+}
+
+// ../api/user/is-auth
+export const isAuth  = async(req ,res)=>{
+  try {
+    console.log("i am inside isAuth controller")
+    const user = await User.findById(req.userId);
+    // console.log("user is  - ",user);
+    user.password = undefined;
+    return res.json({success : true ,user,message : 'success'})
+  } catch (error) {
+    return res.json({
+        success : true,
+        message : error.message,
+    })
+  }
+}
+
+// logOut : /api/user/logout
+
+export const logout = async(req,res)=>{
+    try {
+        res.clearCookie('token',{
+            httpOnly : true,
+            secure : process.env.NODE_ENV==='production',
+            sameSite:process.env.NODE_ENV=='Production' ? 'none' :'strict',
+        })
+
+        return res.json({success : true , message : 'User Logged Out Successfully'});
+    } catch (error) {
+        return res.json({
+            success : false,
+            message : error.message,
+        })
+    }
+}

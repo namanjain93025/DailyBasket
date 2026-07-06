@@ -1,0 +1,18 @@
+<svg width="680" height="220" viewBox="0 0 680 220" xmlns="http://www.w3.org/2000/svg" role="img">
+<title>DailyBasket logo</title>
+<desc>A light green circular badge with a basket shape containing the letters DB in dark green, next to the DailyBasket wordmark, transparent background</desc>
+
+<g transform="translate(60,40)">
+<rect x="0" y="0" width="140" height="140" rx="70" fill="#dcefe0"/>
+<g transform="translate(28,34)">
+<path d="M4 26 L80 26 L70 74 L14 74 Z" fill="#166534"/>
+<path d="M18 26 C18 5 66 5 66 26" fill="none" stroke="#166534" stroke-width="6" stroke-linecap="round"/>
+<path d="M6 26 L78 26" stroke="#dcefe0" stroke-width="2.5"/>
+<text x="42" y="58" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="700" fill="#dcefe0">DB</text>
+</g>
+</g>
+
+<text x="230" y="105" font-family="Arial, Helvetica, sans-serif" font-size="42" font-weight="500" fill="#1a1a1a">Daily<tspan fill="#166534">Basket</tspan></text>
+<text x="230" y="138" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="400" fill="#5a5a5a">fresh groceries, every day</text>
+
+</svg>

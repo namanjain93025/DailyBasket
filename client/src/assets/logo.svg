@@ -1,0 +1,15 @@
+<svg width="180" height="40" viewBox="0 0 180 40" xmlns="http://www.w3.org/2000/svg" role="img">
+<title>DailyBasket logo</title>
+<desc>A small circular badge with a basket shape containing the letters DB, next to the DailyBasket wordmark, sized for a navbar, transparent background</desc>
+
+<rect x="0" y="0" width="40" height="40" rx="20" fill="#dcefe0"/>
+<g transform="translate(8,10)">
+<path d="M1 7 L23 7 L20 21 L4 21 Z" fill="#166534"/>
+<path d="M5 7 C5 1 19 1 19 7" fill="none" stroke="#166534" stroke-width="1.8" stroke-linecap="round"/>
+<path d="M1.5 7 L22.5 7" stroke="#dcefe0" stroke-width="0.8"/>
+<text x="12" y="17" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="7.5" font-weight="700" fill="#dcefe0">DB</text>
+</g>
+
+<text x="50" y="26" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="600" fill="#1a1a1a">Daily<tspan fill="#166534">Basket</tspan></text>
+
+</svg>
