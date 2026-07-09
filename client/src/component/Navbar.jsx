@@ -55,7 +55,9 @@ const Navbar = () => {
                     <img src={assets.cart_icon} alt="cart" className='h-6' />
                     <button className="absolute -top-2 -right-3 text-xs text-white bg-primary-dull w-[18px] h-[18px] rounded-full">{getTotalCount()}</button>
                 </div>
-
+                 <button onClick={() => navigate('seller')} className="cursor-pointer px-8 py-2 bg-white border-primary  text-primary-dull rounded-full">
+                    Seller
+                </button>
                 {!user ? (<button onClick={() => setShowUserLogin(true)} className="cursor-pointer px-8 py-2 bg-primary-dull hover:bg-primary transition text-white rounded-full">
                     Login
                 </button>) :
@@ -93,6 +95,12 @@ const Navbar = () => {
                     </button>) : (<button onClick={() => (logout())} className="cursor-pointer px-6 py-2 mt-2 bg-primary-dull hover:bg-primary transition text-white rounded-full text-sm">
                         LogOut
                     </button>)
+                    
+                }
+                {
+                    <button onClick={() => navigate('seller')} className="cursor-pointer px-6 mt-2 py-2 bg-white border-primary  text-primary-dull rounded-full">
+                    Seller
+                   </button>
                 }
             </div>
 
