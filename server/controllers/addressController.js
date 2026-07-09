@@ -7,7 +7,7 @@ export const addAddress = async (req, res) => {
     try {
         const { address, userId } = req.body;
         if(address.phone.lenght!=10){
-            return res.json({
+            return res.json({ 
                 success : false,
                 message : 'Enter valid Mobile Number',
             })

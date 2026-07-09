@@ -279,19 +279,33 @@ export const verifyRazorpay = async (req, res) => {
             },
             { returnDocument: "after" }
         );
-       
-        const user = await User.findById(order._id);
-
-        const mailOption = {
-           toEmail : user.email,
-           customerName : user.name,
-           orderId : order._id,
-           totalPrice : order.amount 
-        }
-        const mailres = await mailSender(mailOption);
         if (!order) {
             return res.json({ success: false, message: "Order not found" });
         }
+        const user = await User.findById(order.userId);
+
+        if (user) {
+            const mailOption = {
+                toEmail: user.email,
+                customerName: user.name,
+                orderId: order._id,
+                totalPrice: order.amount,
+            };
+            try {
+                await mailSender(mailOption);
+            } catch (mailErr) {
+                console.log("Order verified but email failed:", mailErr);
+            }
+        }
+       
+        // const mailOption = {
+        //    toEmail : user.email,
+        //    customerName : user.name,
+        //    orderId : order._id,
+        //    totalPrice : order.amount 
+        // }
+        // const mailres = await mailSender(mailOption);
+       
         return res.json({ success: true, message: "Payment verified", order });
 
     } catch (error) {
