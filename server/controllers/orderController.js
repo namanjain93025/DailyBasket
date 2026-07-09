@@ -5,6 +5,7 @@ import { configDotenv } from "dotenv";
 import Razorpay from "razorpay";
 import crypto from 'crypto';
 import User from "../models/user.js";
+import { mailSender } from "../utils/mailsender.js";
 //place order COD : /api/order/cod
 
 export const placeOrderCOD = async (req, res) => {
@@ -22,13 +23,26 @@ export const placeOrderCOD = async (req, res) => {
         // Add Tax Charge (2%)
         amount += Math.floor(amount * 0.02);
 
-        await Order.create({
+        const  order = await Order.create({
             userId,
             items,
             amount,
             address,
             paymentType: 'COD',
         });
+        
+        
+        const user = await User.findById(userId);
+        
+        const mailOption = {
+           toEmail : user.email,
+           customerName : user.name,
+           orderId : order._id,
+           items : items,
+           totalPrice : amount ,
+        }
+        const mailres = await mailSender(mailOption);
+   
         return res.json({ success: true, message: 'order placed successfully ' })
     } catch (error) {
         return res.json({
@@ -221,7 +235,7 @@ export const placeOrderRazorpay = async (req, res) => {
         // Link the Razorpay order id back to your DB order
         order.razorpayOrderId = razorpayOrder.id;
         await order.save();
-
+         
         return res.json({
             success: true,
             razorpayOrder,
@@ -265,7 +279,16 @@ export const verifyRazorpay = async (req, res) => {
             },
             { returnDocument: "after" }
         );
+       
+        const user = await User.findById(order._id);
 
+        const mailOption = {
+           toEmail : user.email,
+           customerName : user.name,
+           orderId : order._id,
+           totalPrice : order.amount 
+        }
+        const mailres = await mailSender(mailOption);
         if (!order) {
             return res.json({ success: false, message: "Order not found" });
         }

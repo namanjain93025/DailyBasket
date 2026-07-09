@@ -6,6 +6,12 @@ import { Address } from '../models/address.js';
 export const addAddress = async (req, res) => {
     try {
         const { address, userId } = req.body;
+        if(address.phone.lenght!=10){
+            return res.json({
+                success : false,
+                message : 'Enter valid Mobile Number',
+            })
+        }
         await Address.create({ ...address, userId })
         return res.json({ success: true, message: 'Addresss added successfully' });
 
