@@ -69,6 +69,7 @@ export const sendOtp = async (req, res) => {
         if (!email) {
             return res.status(400).json({ success: false, message: "Email is required" });
         }
+        
 
         const user = await User.findOne({ email });
         if (user) {

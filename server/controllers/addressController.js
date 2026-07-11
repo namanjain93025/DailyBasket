@@ -6,7 +6,7 @@ import { Address } from '../models/address.js';
 export const addAddress = async (req, res) => {
     try {
         const { address, userId } = req.body;
-       
+        console.log("address is ",address);
         if(address.phone.length!==10){
             return res.json({ 
                 success : false,

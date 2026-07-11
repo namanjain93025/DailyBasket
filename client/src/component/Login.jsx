@@ -36,18 +36,21 @@ const Login = () => {
             return;
         }
         try {
-
+            console.log('Otp send successfully')
             const { data } = await axios.post('/api/user/sendOtp', { name, email });
             if (data.success) {
                 setOtpSent(true);
                 toast.success("OTP sent to your email");
             } else {
                 toast.error(data.message);
+                console.log(data);
             }
         } catch (error) {
+            console.log(error)
             toast.error(error.message);
         }
     };
+
 
     const switchState = (newState) => {
         setState(newState);
