@@ -40,7 +40,7 @@ export const register = async (req, res) => {
         })
 
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
-
+        user.password = "";
         return res.cookie('token', token, {
             httpOnly: true,//prevents js to access cookie
             secure: process.env.NODE_ENV === 'production',//use secure cookie in production
@@ -49,7 +49,7 @@ export const register = async (req, res) => {
 
         }).json({
             success: true,
-            user: { email: user.email, name: user.name }
+            user: user,
         })
 
     } catch (error) {
@@ -144,7 +144,7 @@ export const login = async (req, res) => {
         }
 
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
-
+        user.password = "";
         return res.cookie('token', token, {
             httpOnly: true,//prevents js to access cookie
             secure: process.env.NODE_ENV === 'production',//use secure cookie in production
@@ -154,7 +154,7 @@ export const login = async (req, res) => {
         }).json({
             success: true,
             message: "login sucessfully",
-            user: { email: user.email, name: user.name }
+            user: user,
         })
 
 
