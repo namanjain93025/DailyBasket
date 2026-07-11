@@ -42,8 +42,9 @@ const AddAdress = () => {
         navigate('/cart')
         return;
       }
+      
       const { data } = await axios.post('/api/address/add', { address, userId: user._id });
-
+      
       if (data.success) {
         toast.success(data.message);
         navigate('/cart')

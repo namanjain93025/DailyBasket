@@ -1,8 +1,8 @@
 // const nodemailer = require("nodemailer");
 import nodemailer from 'nodemailer';
 import dotenv, { config } from 'dotenv'
-
-
+// import {,config } from 'dotenv';
+config()
 export const mailSender = async({ toEmail, customerName, orderId, totalPrice })=>
 {// Create a transporter using SMTP
 const transporter = nodemailer.createTransport({

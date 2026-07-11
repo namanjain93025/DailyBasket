@@ -28,7 +28,7 @@ export const AppContextProvider = ({ children }) => {
 
 
             if (data.success) {
-                console.log("User from backend:", data.user);
+                // console.log("User from backend:", data.user);
 
                 setUser(data.user);
                 setCartItems(data.user.cartItems || {});

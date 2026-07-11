@@ -2,14 +2,14 @@ import User from "../models/user.js";
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import { configDotenv } from "dotenv";
-
-
+import OTP from '../models/otp.js'
+import otpGenerator from 'otp-generator'
 // register user
 
 
 export const register = async (req, res) => {
     try {
-        const { name, email, password } = req.body;
+        const { name, email, password ,otp } = req.body;
         if (!name || !email || !password) {
             return res.json({
                 success: false,
@@ -23,6 +23,17 @@ export const register = async (req, res) => {
                 message: 'user already exist',
             })
         }
+        //find the latest otp send to user 
+        const latestOtpDoc = await OTP.findOne({email }).sort({createdAt : -1});
+      
+   if(!latestOtpDoc || latestOtpDoc.otp !== otp ){
+        return res.status(400).json({
+            success :false,
+            message :"otp is not matching ",
+        })
+   }
+   //delete otp
+   await OTP.deleteMany({ email });
         const hashedPassword = await bcrypt.hash(password, 10);
         const user = await User.create({
             name, email, password: hashedPassword
@@ -48,6 +59,59 @@ export const register = async (req, res) => {
         })
     }
 }
+
+
+
+
+export const sendOtp = async (req, res) => {
+    try {
+        const { email } = req.body;
+        if (!email) {
+            return res.status(400).json({ success: false, message: "Email is required" });
+        }
+
+        const user = await User.findOne({ email });
+        if (user) {
+            return res.status(409).json({
+                success: false,
+                message: "User with this email already exists",
+            });
+        }
+
+        let otp = otpGenerator.generate(6, {
+            upperCaseAlphabets: false,
+            lowerCaseAlphabets: false,
+            specialChars: false,
+        });
+
+        let isOtpExist = await OTP.findOne({ otp });
+        while (isOtpExist) {
+            otp = otpGenerator.generate(6, {
+                upperCaseAlphabets: false,
+                lowerCaseAlphabets: false,
+                specialChars: false,
+            });
+            isOtpExist = await OTP.findOne({ otp });
+        }
+
+        // clear any stale pending OTPs for this email 
+        await OTP.deleteMany({ email });
+
+        
+        await OTP.create({ email, otp });
+
+        return res.status(200).json({
+            success: true,
+            message: "OTP sent successfully to your email",
+            
+        });
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+    }
+};
 
 //login user 
 export const login = async (req, res) => {
