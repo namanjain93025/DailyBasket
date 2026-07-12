@@ -70,7 +70,7 @@ export const sendOtp = async (req, res) => {
             return res.status(400).json({ success: false, message: "Email is required" });
         }
         
-
+        console.log(`insid esent otp`)
         const user = await User.findOne({ email });
         if (user) {
             return res.status(409).json({
@@ -78,13 +78,14 @@ export const sendOtp = async (req, res) => {
                 message: "User with this email already exists",
             });
         }
+        console.log(`user does not exist`)
 
         let otp = otpGenerator.generate(6, {
             upperCaseAlphabets: false,
             lowerCaseAlphabets: false,
             specialChars: false,
         });
-
+            console.log(`otp is `,otp)
         let isOtpExist = await OTP.findOne({ otp });
         while (isOtpExist) {
             otp = otpGenerator.generate(6, {
@@ -99,14 +100,15 @@ export const sendOtp = async (req, res) => {
         await OTP.deleteMany({ email });
 
         
-        await OTP.create({ email, otp });
-
+        const chkOtp =await OTP.create({ email, otp });
+        // console.log(chkOtp)
         return res.status(200).json({
             success: true,
             message: "OTP sent successfully to your email",
             
         });
     } catch (error) {
+        console.log(error);
         return res.status(500).json({
             success: false,
             message: error.message,

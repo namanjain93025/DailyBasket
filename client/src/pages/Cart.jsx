@@ -185,13 +185,13 @@ const Cart = () => {
                     <p className="text-sm font-medium uppercase">Delivery Address</p>
                     <div className="relative flex justify-between items-start mt-2">
                         <p className="text-gray-500">{selectedAddress ? (`${selectedAddress.street} , ${selectedAddress.city} ,${selectedAddress.country} `) : ("No address found")}</p>
-                        <button onClick={() => setShowAddress(!showAddress)} className="text-primary hover:underline cursor-pointer">
+                        <button onClick={(e) =>{ setShowAddress(!showAddress)}} className="text-primary hover:underline cursor-pointer">
                             Change
                         </button>
                         {showAddress && (
                             <div className="absolute top-12 py-1 bg-white border border-gray-300 text-sm w-full">
                                 {address.map((address, index) => (
-                                    <p onClick={() => setShowAddress(false)} className="text-gray-500 p-2 hover:bg-gray-100">
+                                    <p onClick={(e) =>{ setShowAddress(false)}} className="text-gray-500 p-2 hover:bg-gray-100">
                                         {`${address.street} , ${address.city} ,${address.country} `}
                                     </p>))}
                                 <p onClick={() => navigate('/add-address')} className="text-500 text-center cursor-pointer p-2 hover:bg--500/10">
