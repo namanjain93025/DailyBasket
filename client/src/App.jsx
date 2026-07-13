@@ -17,6 +17,8 @@ import SellerLayout from './pages/SellerLayout.jsx'
 import AddProduct from './component/seller/AddProduct.jsx'
 import ProductList from './component/seller/ProductList.jsx'
 import Orders from './component/seller/Orders.jsx'
+import ForgotPassword from './pages/ForgetPassword.jsx'
+import UpdatePassword from './pages/UpdatePassword.jsx'
 function App(){
 
 const isSellerPath = useLocation().pathname.includes('seller');
@@ -46,6 +48,8 @@ const { showUserLogin ,isSeller } = useAppContext()
             <Route path='orders' element={<Orders/>} />
             
           </Route>
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/update-password/:token" element={<UpdatePassword />} />
           
        </Routes>
      </div>

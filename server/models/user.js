@@ -18,6 +18,12 @@ const userSchema = new mongoose.Schema({
         type: Object,
         default: {},
     },
+    token :{
+        type :String,
+    },
+    tokenExpiresIn :{
+        type :Date,
+    }
 }, { minimize: false })
 //minimize false ensures that empty obj also saved in doc collection 
 const User = mongoose.model('user', userSchema);

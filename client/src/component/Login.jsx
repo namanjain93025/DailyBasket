@@ -112,10 +112,25 @@ const Login = () => {
                     </div>
                 )}
 
-                <div className="w-full ">
+                {/* <div className="w-full ">
                     <p>Password</p>
                     <input onChange={(e) => setPassword(e.target.value)} value={password} placeholder="type here" className="border border-gray-200 rounded w-full p-2 mt-1 outline-primary" type="password" required />
-                </div>
+                </div> */}
+               <div className="w-full ">
+                <p>Password</p>
+                <input onChange={(e) => setPassword(e.target.value)} value={password} placeholder="type here" className="border border-gray-200 rounded w-full p-2 mt-1 outline-primary" type="password" required />
+                {state === "login" && (
+                    <p
+                        onClick={() => {
+                            setShowUserLogin(false);
+                            navigate('/forgot-password');
+                        }}
+                        className="text-xs text-primary cursor-pointer text-right mt-1 hover:underline"
+                    >
+                        Forgot password?
+                    </p>
+                )}
+            </div>
                 {state === "register" ? (
                     <p>
                         Already have account?{" "}

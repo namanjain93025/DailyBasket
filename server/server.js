@@ -10,6 +10,7 @@ import productRouter from './routes/productRoutes.js';
 import cartRouter from './routes/cartRoutes.js';
 import addressRouter from './routes/addressRoutes.js';
 import orderRouter from './routes/orderRoute.js';
+import resetPasswordRoute from './routes/userResetPassword.js';
 dotenv.config();
 
 
@@ -45,6 +46,7 @@ app.use('/api/product',productRouter);
 app.use('/api/cart',cartRouter);
 app.use('/api/address',addressRouter)
 app.use('/api/order',orderRouter)
+app.use('/api/reset/',resetPasswordRoute)
 //connect to db
 await connnectTODB();
 connectCloudinary();
