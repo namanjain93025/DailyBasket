@@ -19,8 +19,12 @@ import ProductList from './component/seller/ProductList.jsx'
 import Orders from './component/seller/Orders.jsx'
 import ForgotPassword from './pages/ForgetPassword.jsx'
 import UpdatePassword from './pages/UpdatePassword.jsx'
+import ShopByDish from './pages/ShopByDish.jsx'
+import CreateIngredient from './component/seller/CreateIngredient.jsx'
+import AddDish from './component/seller/AddDish.jsx'
 function App(){
 
+  
 const isSellerPath = useLocation().pathname.includes('seller');
 // console.log("seller path is , ",isSellerPath);
 
@@ -36,6 +40,7 @@ const { showUserLogin ,isSeller } = useAppContext()
        <div className={`${isSellerPath ?"" :'px-6 md:px-16 lg:px-24 xl:px-32'}`}>
        <Routes>
           <Route path='/' element={<Home/>}></Route>
+          <Route path='/shop-by-dish' element={<ShopByDish/>}></Route>
           <Route path='/product' element={<AllProducts/>}></Route>
           <Route path='/product/:category' element={<ProductCategory/>}></Route>
           <Route path='/product/:category/:id' element={<ProductPage/>}></Route>
@@ -46,7 +51,8 @@ const { showUserLogin ,isSeller } = useAppContext()
             <Route index element={<AddProduct/>} />
             <Route path='product-list' element={<ProductList/>} />
             <Route path='orders' element={<Orders/>} />
-            
+            <Route path='create-ingredient' element={<CreateIngredient/>}></Route>
+            <Route path='add-dish' element={<AddDish/>}></Route>
           </Route>
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/update-password/:token" element={<UpdatePassword />} />

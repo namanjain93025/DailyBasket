@@ -28,7 +28,12 @@ const productSchema = new mongoose.Schema({
     inStock: {
         type: Boolean,
         default: true,
+    },
+    ingredient_id : {
+        type : mongoose.Schema.Types.ObjectId,
+        ref: "Ingredient",
     }
+    
 }, { timestamps: true })
 
 export const Product = mongoose.model.product || mongoose.model('product', productSchema);

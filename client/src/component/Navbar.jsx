@@ -45,6 +45,7 @@ const Navbar = () => {
                 <NavLink to='/'>Home</NavLink>
                 <NavLink to='/product'>All Product</NavLink>
                 <NavLink to='/'>Contact</NavLink>
+                <NavLink to='/shop-by-dish'>Shop by Dish</NavLink>
 
                 <div className="hidden lg:flex items-center text-sm gap-2 border border-gray-300 px-3 rounded-full">
                     <input onChange={(e) => (setSearchQuerry(e.target.value))} className="py-1.5 w-full bg-transparent outline-none placeholder-gray-500" type="text" placeholder="Search products" />
@@ -86,6 +87,7 @@ const Navbar = () => {
             <div className={`${open ? 'flex' : 'hidden'} absolute top-15 left-0 w-full bg-white shadow-md py-4 flex-col items-start gap-2 px-5 text-sm md:hidden`}>
                 <NavLink to='/' onClick={() => (setOpen(false))} >Home</NavLink>
                 <NavLink to='/product' onClick={() => (setOpen(false))}>All Product</NavLink>
+                <NavLink to='/shop-by-dish' onClick={() => (setOpen(false))}>Shop by Dish</NavLink>
                 {user && <NavLink to='/product' onClick={() => (setOpen(false))}>My Orderes</NavLink>}
                 <NavLink to='/' onClick={() => (setOpen(false))}>Contact</NavLink>
 

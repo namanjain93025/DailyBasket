@@ -1,7 +1,7 @@
 import { cloudinary } from '../config/cloudinary.js';
 import { Product } from '../models/product.js';
-
-
+import Ingredient from '../models/ingredient.js';
+import Dishes from '../models/dishes.js';
 //Add Product : /api/product/add
 // export const addProduct = async (req, res) => {
 //     try {
@@ -58,6 +58,7 @@ export const addProduct = async (req, res) => {
                 message: 'Either File or Data is missing'
             });
         }
+        
 
         let productData = JSON.parse(req.body.productData);
 
@@ -69,8 +70,19 @@ export const addProduct = async (req, res) => {
                 return result.secure_url;
             })
         );
+        console.log("ingre ",productData.ingredient)
+        const ingredient = await Ingredient.findById(productData.ingredient)
 
-        await Product.create({ ...productData, image: imagesUrl });
+        if (!ingredient) {
+            return res.json({
+                success: false,
+                message: "Ingredient does not exist"
+            });
+        }
+
+        const ingredient_id = ingredient._id;
+        
+        await Product.create({ ...productData,ingredient_id, image: imagesUrl });
         res.json({ success: true, message: 'Product Added' });
 
     } catch (error) {
@@ -120,3 +132,52 @@ export const changeStock = async (req, res) => {
         return res.json({ success: false, message: error.message })
     }
 }
+
+// api/product/dish
+export const fetchIngredient = async (req, res) => {
+    try {
+        console.log('inside fetchingredient func')
+        const { dishName } = req.query;
+        console.log(dishName)
+        if (!dishName) {
+            return res.json({
+                success: false,
+                message: "Dish name does not exist"
+            });
+        }
+
+         const dish = await Dishes.findOne({
+        $or: [
+        { name: { $regex: `^${dishName}$`, $options: "i" } },
+        { aliases: { $regex: `^${dishName}$`, $options: "i" } }
+            ]
+        });
+        
+        if (!dish) {
+            return res.json({
+                success: false,
+                message: "Dish does not exist"
+            });
+        }
+
+        // const ingredients = dish.ingredients;
+        const items = await Product.find({
+            ingredient_id: {
+                $in: dish.ingredients
+            },
+            inStock: true
+        }).populate("ingredient_id");
+            
+
+        return res.json({
+            success: true,
+            items
+        });
+
+    } catch (error) {
+        return res.json({
+            success: false,
+            message: error.message
+        });
+    }
+};
